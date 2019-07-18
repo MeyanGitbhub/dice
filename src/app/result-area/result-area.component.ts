@@ -29,7 +29,7 @@ export class ResultAreaComponent implements OnInit {
   addToResults(dataToAdd: string) {
     console.log(this.results);
     if(this.results != "") {
-      this.results += "\n" + dataToAdd;
+      this.results =  dataToAdd + "\n" + this.results;
     } else {
       this.results += dataToAdd;
     }
