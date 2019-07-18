@@ -1,0 +1,11 @@
+<div class="row">
+    <div class="coll-lg-1">
+        <input type="button" (click)="rollDice(numOfDice.value)" value="d6"/>
+    </div>
+    <div class="coll-lg-1">
+        <input #numOfDice name="diceCount" type="number" min="1"/>
+    </div>
+    <div class="coll-lg-1">
+        <input name="modifer" type="number"/>
+    </div>
+</div>
