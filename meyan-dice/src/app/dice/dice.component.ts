@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { DiceRollerService } from '../dice-roller.service';
 
 @Component({
@@ -7,16 +7,19 @@ import { DiceRollerService } from '../dice-roller.service';
   styleUrls: ['./dice.component.css']
 })
 export class DiceComponent implements OnInit {
-
+  @Input()
+  sides: number;
   constructor(private diceRollerService: DiceRollerService) { }
 
   ngOnInit() {
   }
 
-  rollDice(numOfDice: number) {
-    console.log('roll');
-    console.log('num: ' + numOfDice)
-    this.diceRollerService.rollDice(numOfDice, 6, 0);
+  rollDice(numOfDice: number, modifier: number) {
+    if (numOfDice > 0) {
+      console.log('roll');
+      console.log('num: ' + numOfDice)
+      this.diceRollerService.rollDice(numOfDice, this.sides, modifier);
+    }
   }
 
 }
