@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DiceRollerService } from '../dice-roller.service';
+import { DiceRollerService, DieRoll, Die } from '../dice-roller.service';
 
 @Component({
   selector: 'app-dice',
@@ -18,7 +18,9 @@ export class DiceComponent implements OnInit {
     if (numOfDice > 0) {
       console.log('roll');
       console.log('num: ' + numOfDice)
-      this.diceRollerService.rollDice(numOfDice, this.sides, modifier);
+      let dieType: Die = new Die(this.sides);
+      let dieRoll: DieRoll = new DieRoll(numOfDice, dieType);
+      this.diceRollerService.rollDice(dieRoll, modifier);
     }
   }
 
