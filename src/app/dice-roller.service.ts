@@ -9,8 +9,45 @@ export class DiceRollerService {
 
   constructor() { }
 
-  rollDice(totalDice: number, sides: number, modifier: number) {
-    let rollType = '(' + totalDice + 'd' + sides + ')';
+  rollDice(dieRoll: DieRoll, modifier: number) {
+    this.subject.next({roll: this.formatResult(modifier, dieRoll)});
+  }
+
+  formatResult(modifier: number, dieRoll: DieRoll) {
+    let rollType = '(' + dieRoll.totalDice + 'd' + dieRoll.dieType.sides + ')';
+    let rollResult: number[] = dieRoll.rollHand();
+    let formattedModifier = this.formatModifier(modifier);
+    let total = this.calculateRollTotal(rollResult, modifier);
+    let formattedResult = rollType + ' ' + formattedModifier 
+        + '\n' + this.formatRollResult(rollResult, ',') 
+        + '\n Total: ' + total;
+    return formattedResult;
+  }
+
+  formatRollResult(dieRolls: number[], separator: string) {
+    let formattedRollResult = '';
+    for (let i = 0; i < dieRolls.length; i++) {
+      formattedRollResult += dieRolls[i];
+      if (i + 1 < dieRolls.length) {
+        formattedRollResult += separator + ' ';
+      }
+    }
+    return formattedRollResult;
+  }
+
+  calculateRollTotal(dieRolls: number[], modifier: number) {
+    let rollTotal:number = Number(modifier);
+    for (let i = 0; i < dieRolls.length; i++) {
+      rollTotal += dieRolls[i];
+    }
+    return rollTotal;
+  }
+
+  rollDiceForResult() {
+
+  }
+
+  formatModifier(modifier: number) {
     let formattedModifier = '';
     if (modifier != 0 ) {
       if (modifier > 0) {
@@ -19,32 +56,45 @@ export class DiceRollerService {
         formattedModifier += ' - ' + Math.abs(modifier);
       }
     }
-    let modifiedResult = rollType + formattedModifier + '\n';
-    let total = 0;
-
-    for (let i = 0; i < totalDice; i++) {
-      let roll = this.rollSingleDice(sides);
-      modifiedResult +=  roll;
-      console.log ("i " + i);
-      console.log ('totalDice: ' + totalDice)
-      if (i + 1 < totalDice ) {
-        modifiedResult += ', ';
-      }
-      total += Number(roll);
-    }
-    total+= Number(modifier);
-    modifiedResult += formattedModifier;
-    console.log('modifier: ' + modifier);
-
-    modifiedResult += '\nTotal: ' + total;
-    this.subject.next({roll: modifiedResult});
+    return formattedModifier;
   }
 
-  rollSingleDice(sides: number) {
-    return Math.floor(Math.random() * (sides - 1 + 1) + 1);
+  rollSingleDie(sides: number) {
+    let die = new Die(6);
+    return die.rollDie();
+    // return Math.floor(Math.random() * (sides - 1 + 1) + 1);
   }
 
   getDiceResult(): Observable<any> {
     return this.subject.asObservable();
+  }
+}
+
+export class DieRoll {
+  dieType: Die;
+  totalDice: number;
+
+  constructor(totalDice: number, dieType:Die) {
+    this.totalDice = totalDice;
+    this.dieType = dieType;
+  }
+
+  rollHand(): number[] {
+    let myHand = new Array();
+    for (let i = 0; i < this.totalDice; i ++) {
+      myHand.push(this.dieType.rollDie());
+    }
+    return myHand;
+  }
+}
+
+export class Die {
+  sides: number;
+  constructor(sides: number) {
+    this.sides = sides;
+  }
+
+  rollDie() {
+    return Math.floor(Math.random() * (this.sides - 1 + 1) + 1);
   }
 }
